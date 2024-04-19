@@ -1,37 +1,33 @@
 const http = require("http");
-const url = require("url");
 
-http.createServer(
+http
+  .createServer(function (req, res) {
+    res.writeHead(200, {
+      "Content-Type": "text/html",
+    });
 
-    function (req, res) {
-       
-        let path = req.url;
+    const baseURL = req.protocol + "://" + req.headers.host + "/"; // `http://${req.headers.host}`;
+    const reqURL = new URL(req.url, baseURL);
+    let path = reqURL.pathname;
 
-        const baseURL = `http://${req.headers.host}`;
-        const reqURL = new URL(req.url, baseURL);
-        console.log(reqURL);
+    console.log(reqURL);
+
+    if (path === "/params") {
+        res.writeHead(200, {
+            "Content-Type": "text/html",
+          });
         const searchParams = new URLSearchParams(reqURL.searchParams);
+        console.log("searchParams", searchParams);
 
+      res.write(searchParams.toString("a-b06=i"));
+     
+    } else {
+      res.writeHead(404, {
+        "Content-Type": " text/html",
+      });
+      res.write("page not found");
+    }
+    res.end();
 
-        if (path === "/params") {
-            res.writeHead(200, {
-                "Content-Type": "text/html"
-            });
-            console.log("searchParams", searchParams)
-
-            res.write("a=5=& b=6")
-            //console.log(searchParams.get(""))
-           // console.log("search Params firstname", searchParams.getall(" "));
-            
-            res.end();
-        }
-        else{
-            res.writeHead(404, {
-                "Content-Type": " text/html"
-            })
-            res.write("page not found")
-        }
-
-       
-
-    }).listen(3002)
+  })
+  .listen(3002);
